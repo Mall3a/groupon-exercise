@@ -1,0 +1,131 @@
+<mat-toolbar color="primary">
+    <span>1º Ejercicio: React/Javascript</span>
+</mat-toolbar>
+<mat-card>
+    <p class="text-justify">Usando el API de omdbapi http: //www.omdbapi.com/ crear una aplicación en react que permita buscar películas por título (ej: Batman) y mostrar un listado de los resultados (título, año e imagen). Cada resultado debe ser clickeable y al clickearlo
+        mostrar más detalles del resultado según los datos disponibles en el API. Además, la aplicación debe permitir agregar a favoritos cada una de las películas (almacenarlas en localStorage) y poder ver un listado de ellas.
+    </p>
+    <form [formGroup]="searchMovieFormGroup">
+        <mat-form-field>
+            <input matInput placeholder="Nombre Película" formControlName="movieName">
+            <mat-error *ngIf="searchMovieFormGroup.controls.movieName.errors?.required">Campo es requerido</mat-error>
+            <mat-error *ngIf="searchMovieFormGroup.controls.movieName.errors?.minlength">Debe ingresar almenos tres caracteres</mat-error>
+            <mat-error *ngIf="searchMovieFormGroup.controls.movieName.errors?.pattern">Debe ingresar solo letras o números</mat-error>
+        </mat-form-field>
+        <button class="m-4" mat-raised-button color="primary" [disabled]="!searchMovieFormGroup.valid" (click)="searchMovie()">Buscar</button>
+        <button class="m-4" mat-raised-button color="primary" (click)="getFavorites()">Ver favoritos</button>
+        <button class="m-4" mat-raised-button color="primary" (click)="clearFavorites()">Borrar favoritos</button>
+    </form>
+
+    <mat-spinner *ngIf="loading"></mat-spinner>
+
+    <div *ngIf="message">
+        {{message}}
+    </div>
+
+    <div [style.display]="showMovieList ? 'block' : 'none'" [hidden]="!movies.data.length>0" class="mat-elevation-z8">
+        <table align="center" mat-table [dataSource]="movies">
+
+            <ng-container matColumnDef="fav">
+                <th mat-header-cell *matHeaderCellDef> Agregar </th>
+                <td mat-cell *matCellDef="let row">
+                    <i class="material-icons" (click)="addToFavorites(row) ">star</i>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="title">
+                <th mat-header-cell *matHeaderCellDef> Título </th>
+                <td mat-cell *matCellDef="let row"> {{row.Title}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="year">
+                <th mat-header-cell *matHeaderCellDef> Año </th>
+                <td mat-cell *matCellDef="let row"> {{row.Year}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="img">
+                <th mat-header-cell *matHeaderCellDef> Imagen </th>
+                <td mat-cell *matCellDef="let row">
+                    <img *ngIf="row.Poster!='N/A'" class="img-thumbnail img-responsive" src="{{row.Poster}} ">
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef> Detalles </th>
+                <td mat-cell *matCellDef="let row ">
+                    <i class="material-icons" (click)="viewMovieDetail(row.Title)">more_horiz</i>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+            </tr>
+        </table>
+
+        <mat-paginator #moviesPaginator [pageSizeOptions]="[5, 10, 25] "></mat-paginator>
+    </div>
+
+    <div *ngIf="showMovieDetail">
+        <h3>Detalle</h3>
+        <mat-chip-list class="mat-chip-list-stacked">
+            Título:
+            <mat-chip>
+                {{details.Title}}
+            </mat-chip>
+            Año:
+            <mat-chip>
+                {{details.Year}}
+            </mat-chip>
+            Evaluación:
+            <mat-chip>
+                {{details.Rated}}
+            </mat-chip>
+            Lanzamiento:
+            <mat-chip>
+                {{details.Released}}
+            </mat-chip>
+            Género:
+            <mat-chip>
+                {{details.Genre}}
+            </mat-chip>
+            Director:
+            <mat-chip>
+                {{details.Director}}
+            </mat-chip>
+
+        </mat-chip-list>
+
+        <br>
+        <button mat-raised-button color="primary" (click)="returnToMovieList()">Volver</button>
+    </div>
+
+    <div *ngIf="showFavoriteMovies" [hidden]="!this.favorites.length>0">
+        <div class="mat-elevation-z8">
+            <table align="center" mat-table [dataSource]="favorites">
+
+                <ng-container matColumnDef="title">
+                    <th mat-header-cell *matHeaderCellDef> Título </th>
+                    <td mat-cell *matCellDef="let row"> {{row.Title}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="year">
+                    <th mat-header-cell *matHeaderCellDef> Año </th>
+                    <td mat-cell *matCellDef="let row"> {{row.Year}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="img">
+                    <th mat-header-cell *matHeaderCellDef> Imagen </th>
+                    <td mat-cell *matCellDef="let row">
+                        <img *ngIf="row.Poster!='N/A'" class="img-thumbnail img-responsive" src="{{row.Poster}} ">
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedFavoritesColumns "></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedFavoritesColumns; ">
+                </tr>
+            </table>
+
+        </div>
+    </div>
+
+</mat-card>

@@ -1,0 +1,20 @@
+th.mat-header-cell,
+td {
+    text-align: center!important;
+}
+
+table {
+    width: 100%;
+}
+
+img {
+    height: 30%
+}
+
+i {
+    cursor: pointer;
+}
+
+mat-chip {
+    max-width: 200px;
+}
