@@ -4,8 +4,7 @@ Este proyecto ha sido generado con la version de [Angular CLI](https://github.co
 
 # Instrucciones
 
-Clonar proyecto (git clone https://Mallea@bitbucket.org/Mallea/ejercicio-peixe.git)
-Moverse a rama develop (git checkout develop)
+Clonar proyecto 
 Ejecutar comando "npm install" para instalar librerías
 Ejecutar comando "ng serve"
 Navegar a http://localhost:4200/
